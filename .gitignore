@@ -2,8 +2,10 @@
 __pycache__/
 extracted/
 raw/
+assets/
+disassembly/
+frida/
 *.apk
-lib/
 update_master.py
 
 # Distribution / packaging
