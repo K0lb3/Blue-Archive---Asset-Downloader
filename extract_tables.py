@@ -23,9 +23,9 @@ for table_file in os.listdir(TABLE_FP):
         data = tz.open(name).read()
         
         if name.endswith(".json"):
-            if name == "logiceffectdata":
+            if name == "logiceffectdata.json":
                 data = Decrypt(data, "LogicEffectData")
-            elif name == "newskilldata":
+            elif name == "newskilldata.json":
                 data = Decrypt(data, "NewSkillData")
 
         fp = os.path.join(table_dir_fp, name)
