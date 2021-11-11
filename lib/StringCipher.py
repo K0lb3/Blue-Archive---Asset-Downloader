@@ -18,8 +18,8 @@ from Crypto.Random import get_random_bytes
 # }
 
 # // Namespace: MX.Core.Crypto.StringCipher
-BlockSize: int = 128
-Keysize: int = 128
+BlockSize: int = 128//8
+Keysize: int = 128//8
 DerivationIterations: int = 1000
 
 
@@ -28,7 +28,7 @@ def Encrypt(plainText: str, passPhrase: str) -> str:
     iv = get_random_bytes(0x10) # GenerateRandomEntropy
     derived = PBKDF2(passPhrase, salt, 16, count=DerivationIterations)
     cipher = AES.new(key=derived[:16], iv=iv, mode=AES.MODE_CBC)
-    data = pad(cipher.encrypt(plainText.encode("utf8")), BlockSize)
+    data = pad(cipher.encrypt(plainText.encode("utf8")), BlockSize, style="pkcs7")
     return b64encode(salt + iv + data).decode("utf8")
     
 
@@ -40,7 +40,7 @@ def Decrypt(cipherText: str, passPhrase: str) -> str:
     rawCipherText = rawCipherText[32:]
     derived = PBKDF2(passPhrase, salt, 16, count=DerivationIterations)
     cipher = AES.new(key=derived[:16], iv=iv, mode=AES.MODE_CBC)
-    return unpad(cipher.decrypt(rawCipherText), BlockSize).decode('utf-8')
+    return unpad(cipher.decrypt(rawCipherText), BlockSize, style="pkcs7").decode('utf-8')
     
 # def GenerateRandomEntropy() -> bytes:
 #     pass
