@@ -3,8 +3,6 @@ from typing import List
 import time
 from math import floor
 
-from numpy import double
-
 double = float
 
 _int = int
