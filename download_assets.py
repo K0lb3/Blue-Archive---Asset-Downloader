@@ -104,7 +104,14 @@ def update_resource(resource_main_url, resource):
         
         # Unity BundleFile
         if url.endswith(".bundle"):
-            extract_assets(data)
+            try:
+                extract_assets(data)
+            except Exception as e:
+                print(e)
+                print("failed to extract bundle")
+                print(url)
+                print(resource["resource_path"])
+                raise e
             # extract with UnityPy
 
 
