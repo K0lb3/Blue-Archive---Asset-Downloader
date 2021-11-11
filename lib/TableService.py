@@ -4,7 +4,6 @@ from typing import IO
 from zipfile import ZipFile
 import os
 from .XXHashService import CalculateHash
-from .TableEncryptionService import XOR
 from typing import Union
 
 
