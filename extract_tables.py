@@ -24,9 +24,9 @@ for table_file in os.listdir(TABLE_FP):
         
         if name.endswith(".json"):
             if name == "logiceffectdata.json":
-                data = Decrypt(data, "LogicEffectData")
+                data = Decrypt(data, "LogicEffectData").encode("utf8")
             elif name == "newskilldata.json":
-                data = Decrypt(data, "NewSkillData")
+                data = Decrypt(data, "NewSkillData").encode("utf8")
 
         fp = os.path.join(table_dir_fp, name)
         with open(fp, "wb") as f:
