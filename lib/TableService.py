@@ -14,7 +14,7 @@ class TableZipFile(ZipFile):
             CalculateHash(name if not isinstance(file, str) else os.path.basename(file))
         ).encode()
 
-    def open(self, name: str, mode: str = "r", *args, force_zip64=False):
+    def open(self, name: str, mode: str = "r", force_zip64=False):
         return super(self.__class__, self).open(
-            name, mode, pwd=self.password, *args, force_zip64=force_zip64
+            name, mode, pwd=self.password, force_zip64=force_zip64
         )
