@@ -3,6 +3,7 @@ from struct import Struct
 from . import XXHashService
 from .MersenneTwister import MersenneTwister
 from base64 import b64decode, b64encode
+from itertools import cycle
 
 uint32 = Struct("<I")
 uint64 = Struct("<Q")
@@ -70,9 +71,24 @@ def EncryptDouble(value: str, key: bytes) -> str:
     return ConvertLong(int(value * 100000), key) if value else 0.0
 
 
-def ConvertStr(value: str, key: bytes) -> str:
-    return _XOR(b64decode(value), key).decode()
+def ConvertString(value: str, key: bytes) -> str:
+    if not value:
+        return ""
+    # the animator table contain strings that are not base64 encoded
+    if len(value) % 8:
+        try:
+            raw = b64decode(value)
+            return bytes(r ^ k for r, k in zip(raw, cycle(key))).decode("utf16")
+        except UnicodeDecodeError:
+            pass
+    try:
+        return value.decode("utf8")
+    except UnicodeDecodeError:
+        raise NotImplementedError()
 
 
-def EncryptStr(value: str, key: bytes) -> str:
-    return b64encode(_XOR(value.encode(), key))
+def EncryptString(value: str, key: bytes) -> str:
+    if not value or len(value) < 8:
+        return value.encode() if value else b""
+    raw = value.encode("utf16")
+    return b64encode(bytes(r ^ k for r, k in zip(raw, cycle(key))))
