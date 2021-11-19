@@ -46,6 +46,7 @@ def main():
     with open(init_fp, "wt", encoding="utf8") as f:
         create_dumper_wrappers(structs, enums, f)
 
+
 # regexes
 
 reStruct = re.compile(
@@ -127,8 +128,6 @@ def extract_structs(data):
 
             if typ.startswith("Nullable<"):
                 typ = typ[9:-1]
-            if name == typ:
-                name += "_"
             if typ_is_list:
                 typ = f"[{typ}]"
 
@@ -139,7 +138,8 @@ def extract_structs(data):
     return structs
 
 
-types = ["bool", "byte", "int","long","uint","ulong","float","double", "string"]
+types = ["bool", "byte", "int", "long", "uint", "ulong", "float", "double", "string"]
+
 
 def write_structs_to_fbs(structs, enums, f):
     for key, struct in structs.items():
@@ -149,6 +149,8 @@ def write_structs_to_fbs(structs, enums, f):
                 typ = ptype[1:-1]
                 if typ.endswith("Length"):
                     typ = typ[:-6]
+                if pname == typ:
+                    pname += "_"
                 if typ not in structs and typ not in enums and typ not in types:
                     continue
             f.write(f"    {pname}: {ptype};\n")
