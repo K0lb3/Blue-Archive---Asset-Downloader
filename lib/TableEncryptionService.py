@@ -3,7 +3,9 @@ from struct import Struct
 from . import XXHashService
 from .MersenneTwister import MersenneTwister
 from base64 import b64decode, b64encode
-from itertools import cycle
+
+# from itertools import cycle
+from Crypto.Util.strxor import strxor, strxor_c
 
 uint32 = Struct("<I")
 uint64 = Struct("<Q")
@@ -32,7 +34,18 @@ def XOR(name: str, data: bytes) -> bytes:
 
 
 def _XOR(value: bytes, key: bytes) -> bytes:
-    return bytes(x ^ y for x, y in zip(value, key))
+    # return bytes(x ^ y for x, y in zip(value, key))
+    if len(value) == len(key):
+        return strxor(value, key)
+    elif len(value) < len(key):
+        return strxor(value, key[: len(value)])
+    else:
+        return b"".join(
+            strxor(value[i : i + len(key)], key) for i in range(0, len(value) - len(key) + 1, len(key))
+        ) + strxor(
+            value[(len(value) - (len(value) % len(key))) :],
+            key[: len(value) % len(key)],
+        )
 
 
 def _XOR_Struct(value: Union[int, float], key: bytes, struct: str) -> Union[int, float]:
@@ -78,7 +91,8 @@ def ConvertString(value: str, key: bytes) -> str:
     if len(value) % 8:
         try:
             raw = b64decode(value)
-            return bytes(r ^ k for r, k in zip(raw, cycle(key))).decode("utf16")
+            return _XOR(raw, key).decode("utf16")
+            # return bytes(r ^ k for r, k in zip(raw, cycle(key))).decode("utf16")
         except UnicodeDecodeError:
             pass
     try:
@@ -91,4 +105,5 @@ def EncryptString(value: str, key: bytes) -> str:
     if not value or len(value) < 8:
         return value.encode() if value else b""
     raw = value.encode("utf16")
-    return b64encode(bytes(r ^ k for r, k in zip(raw, cycle(key))))
+    return b64encode(_XOR(raw, key)).decode()
+    # return b64encode(bytes(r ^ k for r, k in zip(raw, cycle(key))))
