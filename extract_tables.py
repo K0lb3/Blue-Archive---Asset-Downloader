@@ -17,7 +17,7 @@ TABLE_FP = os.path.join(EXT, "Preload", "TableBundles")
 def main():
     for table_file in os.listdir(TABLE_FP):
         # only process .zip files
-        if not table_file.endswith(".zip"):
+        if not table_file.endswith(".zip") or table_file == "Excel.zip":
             continue
 
         print("==", table_file, "==")
