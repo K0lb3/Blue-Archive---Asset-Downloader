@@ -87,18 +87,13 @@ def EncryptDouble(value: str, key: bytes) -> str:
 def ConvertString(value: str, key: bytes) -> str:
     if not value:
         return ""
+
     # the animator table contain strings that are not base64 encoded
-    if len(value) % 8:
-        try:
-            raw = b64decode(value)
-            return _XOR(raw, key).decode("utf16")
-            # return bytes(r ^ k for r, k in zip(raw, cycle(key))).decode("utf16")
-        except UnicodeDecodeError:
-            pass
     try:
+        raw = b64decode(value)
+        return _XOR(raw, key).decode("utf16")
+    except:
         return value.decode("utf8")
-    except UnicodeDecodeError:
-        raise NotImplementedError()
 
 
 def EncryptString(value: str, key: bytes) -> str:
